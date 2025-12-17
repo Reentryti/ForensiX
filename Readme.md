@@ -1,6 +1,6 @@
-# AnaLinux
+# ForensiX
 
-> **ForensicLM** is a Linux forensic tool designed to **collect, normalize, and analyze large volumes of system artefacts**, with optional assistance from a **LLM** used strictly as an **analysis aid** (correlation, summarization, hypothesis building) — never as a source of truth.
+> **ForensiX** is a Linux forensic tool designed to **collect, normalize, and analyze large volumes of system artefacts**, with optional assistance from a **LLM** used strictly as an **analysis aid** (correlation, summarization, hypothesis building) — never as a source of truth.
 
 ---
 
@@ -42,7 +42,7 @@
 
 ### Collection
 
-* Parsing `/var/log/auth.log`
+* Parsing logs 
 * Extraction of SSH attempts 
 * JSON Lines output 
 
@@ -88,30 +88,24 @@ The LLM is used strictly to:
 
 ## Quick Start 
 
-```bash
-go build ./cmd/forensiclm
-./forensiclm collect --root /mnt/image
-```
 
 ---
 
 ## Use Cases
 
-* SSH intrusion analysis
 * User activity timeline reconstruction
 * Linux post-incident audit
 * Forensic training / CTFs
 
 ---
 
-## ⚠️ Disclaimer
-
-ForensicLM is an **analysis assistance tool**.
-It does **not** replace a qualified forensic analyst or legal investigation.
+> [!Disclaimer]
+> ForensiX is an **analysis assistance tool**.
+> It does **not** replace a qualified forensic analyst or legal investigation.
 
 ---
 
 ## License
 
-MIT License
+This repository is licensed under Apache Licence 2.0 - See [here](LICENSE) for more information.
 
