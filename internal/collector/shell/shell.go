@@ -42,6 +42,12 @@ func (c *ShellCollector) Collect(ctx context.Context) ([]model.Event, error) {
 
 	return events, nil
 
-	// In case of bash shell usage
-	//---implemented soon
+	bashPath := filepath.Join(c.Home, ".bash_history")
+	if exists(bashPath) {
+		bashEvents, err := bashCollect(ctx, bashPath)
+		if err == nil {
+			events = append(events, bashEvents)
+		}
+	}
+	return events, nil
 }
