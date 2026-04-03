@@ -1,0 +1,10 @@
+# Binary
+ForensiX
+/cmd/ForensiX/ForensiX
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
