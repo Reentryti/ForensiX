@@ -1,37 +1,32 @@
-package collector
+package pkg
 
-import (
-	"os"
-)
+import "os"
 
-// Passible package manager
+// Manager represents a package manager type
 type Manager string
 
 const (
 	APT    Manager = "apt"
 	DNF    Manager = "dnf"
 	PACMAN Manager = "pacman"
-	//some others manager
 )
 
-// Check existence of the log file on system
 func exists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
 }
 
-// Get current package manager log file
-// make an array cause some system can use multiple pkg manager
+// DetectManager returns the list of package managers found on the system
 func DetectManager() []Manager {
 	var managers []Manager
 
-	if exists("") {
+	if exists("/var/log/apt/history.log") {
 		managers = append(managers, APT)
 	}
-	if exists("") {
+	if exists("/var/log/dnf.log") {
 		managers = append(managers, DNF)
 	}
-	if exists("") {
+	if exists("/var/log/pacman.log") {
 		managers = append(managers, PACMAN)
 	}
 	return managers

@@ -1,4 +1,4 @@
-package collector
+package pkg
 
 import (
 	"bufio"
@@ -10,16 +10,8 @@ import (
 	"ForLinux/internal/model"
 )
 
-// Pacman collector to collect package logs events from pacman log
-type PcmCollector struct {
-}
-
-func (c *PcmCollector) Name() string {
-	return "pacman"
-}
-
-func (c *PcmCollector) Collect(ctx context.Context) ([]model.Event, error) {
-	// Specify pacman log file path
+// CollectPacman parses pacman log for package events
+func CollectPacman(ctx context.Context) ([]model.Event, error) {
 	file, err := os.Open("/var/log/pacman.log")
 	if err != nil {
 		return nil, err
@@ -43,17 +35,13 @@ func (c *PcmCollector) Collect(ctx context.Context) ([]model.Event, error) {
 		}
 
 		var action string
-
 		switch {
-		case strings.Contains(line, "Installed"):
+		case strings.Contains(line, "installed"):
 			action = "package_install"
-
 		case strings.Contains(line, "upgraded"):
 			action = "package_upgrade"
-
 		case strings.Contains(line, "removed"):
 			action = "package_remove"
-
 		default:
 			continue
 		}

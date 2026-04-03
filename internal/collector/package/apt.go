@@ -1,4 +1,4 @@
-package collector
+package pkg
 
 import (
 	"bufio"
@@ -10,14 +10,8 @@ import (
 	"ForLinux/internal/model"
 )
 
-type AptCollector struct {
-}
-
-func (c *AptCollector) Name() string {
-	return "apt"
-}
-
-func (c *AptCollector) Collect(ctx context.Context) ([]model.Event, error) {
+// CollectApt parses apt history log for package events
+func CollectApt(ctx context.Context) ([]model.Event, error) {
 	file, err := os.Open("/var/log/apt/history.log")
 	if err != nil {
 		return nil, err
@@ -28,12 +22,19 @@ func (c *AptCollector) Collect(ctx context.Context) ([]model.Event, error) {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
+		select {
+		case <-ctx.Done():
+			return events, ctx.Err()
+		default:
+		}
+
 		line := scanner.Text()
 		if strings.HasPrefix(line, "Install") {
 			events = append(events, model.Event{
 				Timestamp: time.Now(),
 				Type:      model.EventPackage,
 				Action:    "package_install",
+				Source:    "apt",
 				Raw:       line,
 			})
 		}

@@ -1,4 +1,4 @@
-package collector
+package pkg
 
 import (
 	"bufio"
@@ -10,15 +10,8 @@ import (
 	"ForLinux/internal/model"
 )
 
-// DNF collector to collect package logs events from dnf logs
-type DnfCollector struct {
-}
-
-func (c *DnfCollector) Name() string {
-	return "dnf"
-}
-
-func (c *DnfCollector) Collect(ctx context.Context) ([]model.Event, error) {
+// CollectDnf parses dnf log for package events
+func CollectDnf(ctx context.Context) ([]model.Event, error) {
 	file, err := os.Open("/var/log/dnf.log")
 	if err != nil {
 		return nil, err
@@ -56,7 +49,6 @@ func (c *DnfCollector) Collect(ctx context.Context) ([]model.Event, error) {
 			Source:    "dnf",
 			Raw:       line,
 		})
-
 	}
 	return events, scanner.Err()
 }
