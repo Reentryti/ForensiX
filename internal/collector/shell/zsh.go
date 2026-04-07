@@ -1,4 +1,4 @@
-package collector
+package shell
 
 import (
 	"bufio"
@@ -11,15 +11,14 @@ import (
 	"ForLinux/internal/model"
 )
 
+// zshCollect parses a zsh_history file into forensic events
 func zshCollect(ctx context.Context, path string) ([]model.Event, error) {
-	// Shell history file opening
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	// Line by line collection, store on slice
 	var events []model.Event
 	scanner := bufio.NewScanner(file)
 
@@ -27,19 +26,16 @@ func zshCollect(ctx context.Context, path string) ([]model.Event, error) {
 		select {
 		case <-ctx.Done():
 			return events, ctx.Err()
-
 		default:
 		}
 
-		// Querying the line to parse
 		line := scanner.Text()
 
-		// Check line format validation for zsh history
+		// Zsh extended history format: ": timestamp:0;command"
 		if !strings.HasPrefix(line, ": ") {
 			continue
 		}
 
-		// Line parsing (commande - metadata - timestamp)
 		parts := strings.SplitN(line[2:], ";", 2)
 		if len(parts) != 2 {
 			continue
@@ -55,14 +51,13 @@ func zshCollect(ctx context.Context, path string) ([]model.Event, error) {
 			continue
 		}
 
-		// Event creation (need it for the forensic)
 		events = append(events, model.Event{
 			Timestamp: time.Unix(ts, 0),
 			Type:      model.EventExecution,
 			Action:    "shell_command",
 			Source:    "zsh",
-			Command:   parts[1],
-			Raw:       line,
+			Command:  parts[1],
+			Raw:      line,
 		})
 	}
 	return events, scanner.Err()

@@ -8,3 +8,6 @@ ForensiX
 
 # OS
 .DS_Store
+
+# Emacs backup
+*~

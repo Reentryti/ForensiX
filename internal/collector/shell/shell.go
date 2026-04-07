@@ -1,4 +1,4 @@
-package collector
+package shell
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"ForLinux/internal/model"
 )
 
-// Main collector for shell log like history collection
+// ShellCollector collects shell history from bash and zsh
 type ShellCollector struct {
 	Home string
 }
@@ -21,17 +21,15 @@ func (c *ShellCollector) Name() string {
 	return "shell_history"
 }
 
-// Verify working shell based on
 func exists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
 }
 
 func (c *ShellCollector) Collect(ctx context.Context) ([]model.Event, error) {
-	//Event collect through
 	var events []model.Event
 
-	// In case of zsh shell usage
+	// Collect zsh history
 	zshPath := filepath.Join(c.Home, ".zsh_history")
 	if exists(zshPath) {
 		zshEvents, err := zshCollect(ctx, zshPath)
@@ -40,14 +38,14 @@ func (c *ShellCollector) Collect(ctx context.Context) ([]model.Event, error) {
 		}
 	}
 
-	return events, nil
-
+	// Collect bash history
 	bashPath := filepath.Join(c.Home, ".bash_history")
 	if exists(bashPath) {
 		bashEvents, err := bashCollect(ctx, bashPath)
 		if err == nil {
-			events = append(events, bashEvents)
+			events = append(events, bashEvents...)
 		}
 	}
+
 	return events, nil
 }
